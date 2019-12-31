@@ -1,5 +1,3 @@
-import { checkForISBN } from "./isbnChecker";
-
 function handleSubmit(event) {
     event.preventDefault()
 
@@ -8,7 +6,8 @@ function handleSubmit(event) {
     
     console.log("::: Running checkForISBN :::", formText);
 
-    async function postData(url = '', data = {}) {
+    // async function for validation of ISBN
+    async function checkISBN(url = '', data = {}) {
         const response = await fetch(url, {
           method: 'POST', 
           headers: {
@@ -19,22 +18,34 @@ function handleSubmit(event) {
         return response.json(); 
       }
 
-      postData('http://localhost:8081/isbn', {isbn: formText})
+      // check the entered ISBN, if successful go ahead
+      checkISBN('http://localhost:8081/isbn', {isbn: formText})
       .then((data) => {
         console.log('DATA')
         console.log(data); // JSON data parsed by `response.json()` call
         
         if ( data.status === 'SUCCESS' ) {
+            var myISBN = formText.replace(/-/g,"");
+            console.log('ISBN unhyphenated: ' + myISBN);
             console.log('TRUE');
-            isbnValid();
+            isbnValid({isbn: myISBN});
         } else { console.log('FALSE'); 
             isbnNotValid();
             }
       });
 
-    function isbnValid (isbn) {
+    // Aylien API call with valid ISBN
+    function isbnValid (data = {}) {
         console.log("::: Form Submitted :::")
-        fetch('http://localhost:8081/test')
+        fetch('http://localhost:8081/tixapi',
+            {
+                method: 'POST', 
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data) 
+            }
+        )
         .then(res => res.json())
         .then(function(res) {
             console.log(res);

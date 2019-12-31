@@ -41,10 +41,13 @@ app.listen(8081, function () {
 
 var apiResponse;
 
-app.get('/test', function (req, res) {
+app.post('/tixapi', function (req, res) {
+
+  const myISBN  = req.body.isbn; 
+  const myUrl = 'https://www.vlbtix.de/user/search/Title.aspx?pr=' + myISBN;
 
   textapi.entities({
-    url: 'https://www.vlbtix.de/user/search/Title.aspx?pr=9783442314478'
+    url: myUrl
   }, function(error, response) {
     if (error === null) {
       Object.keys(response.entities).forEach(function(e) {

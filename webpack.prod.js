@@ -1,7 +1,9 @@
 const path = require('path')
 const webpack = require('webpack')
-const HtmlWebPackPlugin = require("html-webpack-plugin")
+const HtmlWebPackPlugin = require('html-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const WorkboxPlugin = require('workbox-webpack-plugin');
 
 module.exports = {
     mode: 'production',
@@ -28,6 +30,10 @@ module.exports = {
             template: "./src/client/views/index.html",
             filename: "./index.html",
         }),
-        new MiniCssExtractPlugin({filename: '[name].css'})
+        new MiniCssExtractPlugin({filename: '[name].css'}),
+        new CopyWebpackPlugin([
+            {from:'./src/client/img',to:'img'} 
+        ]),
+        new WorkboxPlugin.GenerateSW()
     ]
 }
